@@ -1,0 +1,57 @@
+/*Provides information for the background color of the app.*/
+html {
+    background-color: #fbfbf1;
+    font-family: 'Raleway', sans-serif;
+    font-size: 20px;
+    font-weight:500;
+    text-align: center;
+}
+
+/*Adjust header style to fade in to view*/
+h1 {
+    font-weight: 700;
+    -webkit-animation: fadein 4s;
+}
+
+/*Animation function called by fadein. Supported only on Chrome and Safari*/
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/*Adjust p text to take up less space and be a bit lighter*/
+p {
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*The following few sections adjust the look of the lobby's table.*/
+table {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: 2px mediumpurple;
+    background-color: mediumpurple;
+    color: white;
+}
+
+tr:hover {background-color: #ddd;}
+
+#game {
+    /*zoom: 75%;*/
+}
+
+.Timer {
+    position: absolute;
+    fontSize: 2rem;
+    float: left;
+    padding: 1rem;
+    left: 5%;
+    border: 2px solid black
+}

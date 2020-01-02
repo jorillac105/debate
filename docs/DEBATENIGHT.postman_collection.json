@@ -1,0 +1,984 @@
+{
+	"info": {
+		"_postman_id": "d113b4ed-ee4e-4cd8-9b00-a6bd734e0921",
+		"name": "DEBATENIGHT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create node",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2599a7f5-5857-447d-aebe-bb8581b947da",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Identifiers are always increasing\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/nodes\", (err, response) => {",
+							"        const identifiers = response.json().map(item => item.identifier).reverse();",
+							"        if(isNaN(identifiers[1])) {",
+							"            pm.expect(identifiers[0]).to.be.equal(1);",
+							"        } else {",
+							"            pm.expect(identifiers[0]).to.be.equal(identifiers[1] + 1);",
+							"        }",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a1bb864a-c824-44f9-86a4-20364ffa672f",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "description",
+							"value": "some description",
+							"type": "text"
+						},
+						{
+							"key": "x",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "y",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "parentx",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "parenty",
+							"value": "3",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "some status",
+							"type": "text"
+						},
+						{
+							"key": "owner",
+							"value": "player1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/nodes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"nodes"
+					]
+				},
+				"description": "Post a new node to the server"
+			},
+			"response": [
+				{
+					"name": "Successful",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/items",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"items"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [],
+					"cookie": [],
+					"body": "[\n\t{\"identifier\": 1, \"description\": \"Read TODO items\"},\n\t{\"identifier\": 2, \"description\": \"Create new TODO items\"},\n\t{\"identifier\": 3, \"description\": \"Edit TODO item\"},\n\t{\"identifier\": 4, \"description\": \"Mark items as DONE\"}\n]\n"
+				}
+			]
+		},
+		{
+			"name": "Get a node from the server",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "31bba8ee-2938-4282-be95-0d30dd5be307",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response JSON is a list\", () => {",
+							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+							"});",
+							"pm.test(\"Nodes have all keys\", () => {",
+							"    pm.response.json().forEach(node => {",
+							"        pm.expect(node).to.have.all.keys(\"identifier\", \"description\", \"x\", \"y\", \"parentx\", \"parenty\", \"status\", \"owner\");",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "76cc81c7-59ab-4d79-aff0-20b9817df1e4",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:7000/nodes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"nodes"
+					]
+				},
+				"description": "Check that getting nodes is working"
+			},
+			"response": [
+				{
+					"name": "Successful",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://localhost/items",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"items"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "Edit node status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1f28be8a-b12f-4544-ab1f-05458edd4a96",
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"pm.test(\"Node status is edited\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/nodes\", (err, response) => {",
+							"        pm.expect(response.json().last().status).to.equal(\"the status has changed!\");",
+							"    });",
+							"});",
+							"",
+							"pm.test(\"Status code is 404 if item isn’t found\", () => {",
+							"    pm.sendRequest({ url: \"http://localhost:7000/nodes/51039\", method: \"PUT\" }, (err, response) => {",
+							"        pm.expect(response).to.have.status(404);",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1f042eff-532a-4075-84f7-e8397e6b5393",
+						"exec": [
+							"pm.sendRequest({ url: \"http://localhost:7000/nodes\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/nodes\", (err, response) => {",
+							"        pm.environment.set(\"nodeIdentifier\", response.json().last().identifier);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "status",
+							"value": "the status has changed!",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/nodes/{{nodeIdentifier}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"nodes",
+						"{{nodeIdentifier}}"
+					]
+				},
+				"description": "Check that the node's string status can be modified."
+			},
+			"response": [
+				{
+					"name": "Successful",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "description",
+									"value": "whatever",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:7000/items/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7000",
+							"path": [
+								"items",
+								"7"
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "User signup (Create player)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b6649a06-3825-4610-ba00-f16dc8bac995",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "user1",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "score",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "some status",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/players",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"players"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1f28be8a-b12f-4544-ab1f-05458edd4a96",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1f042eff-532a-4075-84f7-e8397e6b5393",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "user1",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/players/username",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"players",
+						"username"
+					]
+				},
+				"description": "TODO!"
+			},
+			"response": [
+				{
+					"name": "Successful",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "description",
+									"value": "whatever",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:7000/items/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7000",
+							"path": [
+								"items",
+								"7"
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "Get a player from the server",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e92f88f2-66f6-459d-91d8-e34e573705c2",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response JSON is an object\", () => {",
+							"    pm.expect(pm.response.json()).to.be.an(\"object\");",
+							"});",
+							"pm.test(\"Player has all keys\", () => {",
+							"    pm.expect(pm.response.json()).to.have.all.keys(\"username\", \"password\", \"score\", \"status\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/players",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"players"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit player status",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c3da4932-7311-47c9-9cb7-c9308d13961b",
+						"exec": [
+							"pm.sendRequest({ url: \"http://localhost:7000/players/{{username}}/status\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/players/\", (err, response) => {",
+							"        pm.environment.set(\"username\", response.json().username);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4a815435-86e5-49d2-8c28-9532c7262b3c",
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"pm.test(\"Player status is edited\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/players/\", (err, response) => {",
+							"        pm.expect(response.json().status).to.equal(\"new status\");",
+							"    });",
+							"});",
+							"",
+							"pm.test(\"Status code is 404 if item isn’t found\", () => {",
+							"    pm.sendRequest({ url: \"http://localhost:7000/players/51039\", method: \"PUT\" }, (err, response) => {",
+							"        pm.expect(response).to.have.status(404);",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "status",
+							"value": "new status",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/players/{{username}}/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"players",
+						"{{username}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit player score",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c3da4932-7311-47c9-9cb7-c9308d13961b",
+						"exec": [
+							"pm.sendRequest({ url: \"http://localhost:7000/players/{{username}}/score\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/players/\", (err, response) => {",
+							"        pm.environment.set(\"username\", response.json().username);",
+							"",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4a815435-86e5-49d2-8c28-9532c7262b3c",
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"pm.test(\"Player status is edited\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/players/\", (err, response) => {",
+							"        pm.expect(response.json().score).to.equal(11);",
+							"    });",
+							"});",
+							"",
+							"pm.test(\"Status code is 404 if item isn’t found\", () => {",
+							"    pm.sendRequest({ url: \"http://localhost:7000/players/51039\", method: \"PUT\" }, (err, response) => {",
+							"        pm.expect(response).to.have.status(404);",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "score",
+							"value": "11",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/players/{{username}}/score",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"players",
+						"{{username}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create game",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e8941194-f4fc-4607-8130-078af8b531a0",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Identifiers are always increasing\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/games\", (err, response) => {",
+							"        const games = response.json().map(game => game.identifier).reverse();",
+							"        if(isNaN(games[1])) {",
+							"            pm.expect(games[0]).to.be.equal(1);",
+							"        } else {",
+							"            pm.expect(games[0]).to.be.equal(games[1] + 1);",
+							"        }",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "status",
+							"value": "status",
+							"type": "text"
+						},
+						{
+							"key": "proPlayer",
+							"value": "pro",
+							"type": "text"
+						},
+						{
+							"key": "conPlayer",
+							"value": "con",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/games",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"games"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a game from the server",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "62007d77-6c1e-422d-8e3a-154761359f55",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response JSON is a list\", () => {",
+							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+							"});",
+							"pm.test(\"Games have all keys\", () => {",
+							"    pm.response.json().forEach(game => {",
+							"        pm.expect(game).to.have.all.keys(\"identifier\", \"status\", \"proPlayer\", \"conPlayer\");",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/games",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"games"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit game status",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "300d35f5-5893-46d7-8288-c891a456e467",
+						"exec": [
+							"pm.sendRequest({ url: \"http://localhost:7000/games/{{gameIdentifier}}/status\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/games/\", (err, response) => {",
+							"        pm.environment.set(\"gameIdentifier\", response.json().last().identifier);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "67903ead-2e73-4418-9835-e03d54af09a3",
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"pm.test(\"Game status is edited\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/games/\", (err, response) => {",
+							"        pm.expect(response.json().last().status).to.equal(\"new status\");",
+							"    });",
+							"});",
+							"",
+							"pm.test(\"Status code is 404 if item isn’t found\", () => {",
+							"    pm.sendRequest({ url: \"http://localhost:7000/games/51039\", method: \"PUT\" }, (err, response) => {",
+							"        pm.expect(response).to.have.status(404);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "status",
+							"value": "new status",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/games/{{gameIdentifier}}/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"games",
+						"{{gameIdentifier}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit game pro player",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "300d35f5-5893-46d7-8288-c891a456e467",
+						"exec": [
+							"pm.sendRequest({ url: \"http://localhost:7000/games/{{gameIdentifier}}/proPlayer\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/games/\", (err, response) => {",
+							"        pm.environment.set(\"gameIdentifier\", response.json().last().identifier);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "67903ead-2e73-4418-9835-e03d54af09a3",
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"pm.test(\"Game status is edited\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/games\", (err, response) => {",
+							"        pm.expect(response.json().last().proPlayer).to.equal(\"newPro\");",
+							"    });",
+							"});",
+							"",
+							"pm.test(\"Status code is 404 if item isn’t found\", () => {",
+							"    pm.sendRequest({ url: \"http://localhost:7000/games/51039\", method: \"PUT\" }, (err, response) => {",
+							"        pm.expect(response).to.have.status(404);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "proPlayer",
+							"value": "newPro",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/games/{{gameIdentifier}}/proPlayer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"games",
+						"{{gameIdentifier}}",
+						"proPlayer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit game con player ",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "300d35f5-5893-46d7-8288-c891a456e467",
+						"exec": [
+							"pm.sendRequest({ url: \"http://localhost:7000/games/{{gameIdentifier}}/conPlayer\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/games/\", (err, response) => {",
+							"        pm.environment.set(\"gameIdentifier\", response.json().last().identifier);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "67903ead-2e73-4418-9835-e03d54af09a3",
+						"exec": [
+							"pm.test(\"Status code is 204\", () => {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"pm.test(\"Game status is edited\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/games\", (err, response) => {",
+							"        pm.expect(response.json().last().conPlayer).to.equal(\"newCon\");",
+							"    });",
+							"});",
+							"",
+							"pm.test(\"Status code is 404 if item isn’t found\", () => {",
+							"    pm.sendRequest({ url: \"http://localhost:7000/games/51039\", method: \"PUT\" }, (err, response) => {",
+							"        pm.expect(response).to.have.status(404);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "conPlayer",
+							"value": "newCon",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/games/{{gameIdentifier}}/conPlayer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"games",
+						"{{gameIdentifier}}",
+						"conPlayer"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
